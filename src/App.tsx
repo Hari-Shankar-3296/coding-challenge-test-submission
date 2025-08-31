@@ -3,6 +3,7 @@ import React from "react";
 import Address from "@/components/Address/Address";
 import AddressBook from "@/components/AddressBook/AddressBook";
 import Button from "@/components/Button/Button";
+import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 import InputText from "@/components/InputText/InputText";
 import Radio from "@/components/Radio/Radio";
 import Section from "@/components/Section/Section";
@@ -150,11 +151,22 @@ function App() {
     addAddress({ ...foundAddress, firstName, lastName });
   };
 
+  const handleClearFields = () => {
+    setError(undefined);
+    setPostCode("");  
+    setHouseNumber("");
+    setFirstName("");
+    setLastName("");
+    setSelectedAddress("");
+    setAddresses([]);
+    setLoading(false);
+  };
+
   // extra Logic to hide button and fields
   // commenting out as not sure this will be captured in automated tests while grading
   // Hidden Address and Name details forms when mandatory fields are empty
   // This ensures user cannot enter these forms without entering mandatory fields
-  
+
   // const isPostCodeValidNumber = !isNaN(parseInt(postCode)) && parseInt(postCode) > 999;
   // const isHouseNumberValidNumber = !isNaN(parseInt(houseNumber)) && parseInt(houseNumber) > 0;
   // const showAddressDetails = addresses?.length > 0 && isPostCodeValidNumber && isHouseNumberValidNumber;
@@ -237,14 +249,19 @@ function App() {
         )}
 
         {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
-        {error && <div className="error">{error}</div>}
+        {/* I can add Toastify to show error but I am in assumption it is not needed as per requirement */}
+        {error && <ErrorMessage  errorMessage={error} />}
 
-        {/* TODO: Add a button to clear all form fields. 
+        {/* TODO: Add a button to clear all form fields. - DONE
         Button must look different from the default primary button, see design. 
         Button text name must be "Clear all fields"
         On Click, it must clear all form fields, remove all search results and clear all prior
         error messages
         */}
+
+        <Button type="button" variant="secondary" onClick={handleClearFields}>
+          Clear all fields
+        </Button>
       </Section>
 
       <Section variant="dark">
