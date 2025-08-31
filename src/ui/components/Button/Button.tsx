@@ -28,7 +28,7 @@ const Button: FunctionComponent<ButtonProps> = ({
       type={type}
       onClick={onClick}
     >
-      {loading && <span data-testid="loading-spinner">Loading...</span>}
+      {loading && <span className={$.spinner} data-testid="loading-spinner" />}
       {children}
     </button>
   );

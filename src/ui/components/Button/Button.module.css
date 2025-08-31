@@ -38,5 +38,28 @@
   border: 1px solid var(--color-border);
 }
 
-/* can also use CSS Selectors like .primary, .secondary {} */
+
+/* can also use CSS Selectors like .primary, .secondary {} with same styles */
 /* but the ask is to create separate styles for .primary and .secondary variants of this button */
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  border: 5px solid var(--color-text-light);
+  border-bottom-color: var(--color-background);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

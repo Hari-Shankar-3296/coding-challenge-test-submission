@@ -22,6 +22,7 @@ function App() {
    * - Remove all individual React.useState
    * - Remove all individual onChange handlers, like handlePostCodeChange for example
    */
+  const [isLoading, setLoading] = React.useState(false);
   const [postCode, setPostCode] = React.useState("");
   const [houseNumber, setHouseNumber] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
@@ -85,36 +86,34 @@ function App() {
     // clear previous error + addresses
     setError(undefined);
     setAddresses([]);
+    setLoading(true);
 
     // basic validation
-    !postCode && setError("Post Code is mandatory to find the address");
-    !houseNumber && setError("House Number is mandatory to find the address");
-    if(!postCode || !houseNumber) return;
-    if(typeof parseInt(postCode) !== "number" || typeof parseInt(houseNumber) !== "number") {
-      setError("Post Code and House Number must be valid numbers");
-      return;
-    }
 
     try {
       const res = await fetch(
         `${BASE_URL}/api/getAddresses?postcode=${postCode}&streetnumber=${houseNumber}`
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch addresses");
-      }
-
       const data = await res.json();
+      setLoading(false);
+      if (!res.ok || data.status === "error") {
+        // Backend returned an error
+        console.error("Backend error:", data.errormessage);
+        setError(data.errormessage || "Something went wrong. Try Again Later!");
+        return;
+      }
 
       console.log(data, "fetched addresses");
 
       // newAddresses ensures each address has houseNumber and unique id as lat_long included
       const newAddresses = data?.details.map((addr: any) =>
-        transformAddress({ ...addr, houseNumber: addr.houseNumber || houseNumber })
+        transformAddress(addr)
       );
 
       setAddresses(newAddresses);
     } catch (err) {
+      setLoading(false);
       setError("Something went wrong while fetching addresses. Try again later!");
       console.error(err);
     }
@@ -153,8 +152,10 @@ function App() {
 
   // Hide Address and Name details forms when mandatory fields are empty
   // This ensures user cannot enter these forms without entering mandatory fields
-  const showAddressDetails = addresses?.length > 0 && postCode && houseNumber;
-  const showNameDetails = selectedAddress && postCode && houseNumber;
+  const isPostCodeValidNumber = !isNaN(parseInt(postCode)) && parseInt(postCode) > 999;
+  const isHouseNumberValidNumber = !isNaN(parseInt(houseNumber)) && parseInt(houseNumber) > 0;
+  const showAddressDetails = addresses?.length > 0 && isPostCodeValidNumber && isHouseNumberValidNumber;
+  const showNameDetails = selectedAddress && isPostCodeValidNumber && isHouseNumberValidNumber;
 
   return (
     <main>
@@ -186,7 +187,7 @@ function App() {
                 placeholder="House number"
               />
             </div>
-            <Button type="submit">Find</Button>
+            <Button type="submit" loading={isLoading}>Find</Button>
           </fieldset>
         </form>
         {showAddressDetails &&
