@@ -86,6 +86,7 @@ function App() {
     setError(undefined);
     setAddresses([]);
 
+    // basic validation
     !postCode && setError("Post Code is mandatory to find the address");
     !houseNumber && setError("House Number is mandatory to find the address");
     if(!postCode || !houseNumber) return;

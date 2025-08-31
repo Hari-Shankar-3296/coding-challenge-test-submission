@@ -26,14 +26,17 @@
 
 /* Primary button variant */
 .primary {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  border: 1px solid var(--color-primary-dark);
+  background: var(--color-brand);
+  color: var(--color-background);
+  border: 1px solid var(--color-border);
 }
 
 /* Secondary button variant */
 .secondary {
-  background: var(--color-secondary);
-  color: var(--color-on-secondary);
-  border: 1px solid var(--color-secondary-dark);
+  background: var(--color-brand);
+  color: var(--color-background);
+  border: 1px solid var(--color-border);
 }
+
+/* can also use CSS Selectors like .primary, .secondary {} */
+/* but the ask is to create separate styles for .primary and .secondary variants of this button */
