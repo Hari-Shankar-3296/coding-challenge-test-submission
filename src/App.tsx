@@ -75,10 +75,6 @@ function App() {
    * - Ensure to clear previous search results on each click
    * - Bonus: Add a loading state in the UI while fetching addresses
    */
-  // const handleAddressSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(e, ">>>>>>");
-  // };
 
 
   const handleAddressSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -110,7 +106,9 @@ function App() {
       console.log(data, "fetched addresses");
 
       // newAddresses ensures each address has houseNumber and unique id as lat_long included
-      const newAddresses = data?.details.map((addr: AddressType) => transformAddress(addr));
+      const newAddresses = data?.details.map((addr: any) =>
+        transformAddress({ ...addr, houseNumber: addr.houseNumber || houseNumber })
+      );
 
       setAddresses(newAddresses);
     } catch (err) {
