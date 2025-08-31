@@ -248,13 +248,13 @@ function App() {
           </form>
         )}
 
-        {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
-        {/* I can add Toastify to show error but I am in assumption it is not needed as per requirement */}
-        {error && <ErrorMessage  errorMessage={error} />}
+        {/* TODO: Create an <ErrorMessage /> component for displaying an error message - DONE */}
+        {/* I can add Toastify to show fancy error Toasts but I am in assumption it is not needed as per requirement */}
+        <ErrorMessage errorMessage={error} />
 
         {/* TODO: Add a button to clear all form fields. - DONE
-        Button must look different from the default primary button, see design. 
-        Button text name must be "Clear all fields"
+        Button must look different from the default primary button, see design. - DONE
+        Button text name must be "Clear all fields" - DONE
         On Click, it must clear all form fields, remove all search results and clear all prior
         error messages
         */}

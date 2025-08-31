@@ -26,6 +26,8 @@ code {
   --color-brand: #413ef7;
   --color-text: #141925;
   --color-text-light: #72787d;
+  --color-text-error: #ff3f2d;
+  --color-text-warning: #fbcc25;
   --font-primary: 'Roboto';
   --width-input: 20rem;
   --width-content: 30rem;

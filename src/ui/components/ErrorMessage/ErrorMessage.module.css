@@ -1,4 +1,16 @@
-.error {
-  color: red;
+.error, .info, .warning {
   padding: 0.5em 0;
+}
+
+
+.error {
+  color: var(--color-text-error);
+}
+
+.info {
+  color: var(--color-text-light);
+}
+
+.warning {
+  color: var(--color-text-warning);
 }
