@@ -10,6 +10,8 @@ import useAddressBook from "@/hooks/useAddressBook";
 
 import styles from "./App.module.css";
 import { Address as AddressType } from "./types";
+import transformAddress from "./core/models/address";
+import { BASE_URL } from "./helpers/global";
 
 function App() {
   /**
@@ -52,7 +54,17 @@ function App() {
 
   const handleSelectedAddressChange = (
     e: React.ChangeEvent<HTMLInputElement>
-  ) => setSelectedAddress(e.target.value);
+  ) => {
+    console.log(e.target.value, "selected address");
+    const selectedAddress = addresses.find(
+      (address) => address.id === e.target.value
+    );
+    if (!selectedAddress) {
+      setError("Selected address not found");
+      return;
+    }
+    setSelectedAddress(selectedAddress.id);
+  };
 
   /** TODO: Fetch addresses based on houseNumber and postCode using the local BE api
    * - Example URL of API: ${process.env.NEXT_PUBLIC_URL}/api/getAddresses?postcode=1345&streetnumber=350
@@ -63,15 +75,61 @@ function App() {
    * - Ensure to clear previous search results on each click
    * - Bonus: Add a loading state in the UI while fetching addresses
    */
-  const handleAddressSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  // const handleAddressSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   console.log(e, ">>>>>>");
+  // };
+
+
+  const handleAddressSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // clear previous error + addresses
+    setError(undefined);
+    setAddresses([]);
+
+    !postCode && setError("Post Code is mandatory to find the address");
+    !houseNumber && setError("House Number is mandatory to find the address");
+    if(!postCode || !houseNumber) return;
+    if(typeof parseInt(postCode) !== "number" || typeof parseInt(houseNumber) !== "number") {
+      setError("Post Code and House Number must be valid numbers");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/getAddresses?postcode=${postCode}&streetnumber=${houseNumber}`
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch addresses");
+      }
+
+      const data = await res.json();
+
+      console.log(data, "fetched addresses");
+
+      // newAddresses ensures each address has houseNumber and unique id as lat_long included
+      const newAddresses = data?.details.map((addr: AddressType) => transformAddress(addr));
+
+      setAddresses(newAddresses);
+    } catch (err) {
+      setError("Something went wrong while fetching addresses");
+      console.error(err);
+    }
   };
+
 
   /** TODO: Add basic validation to ensure first name and last name fields aren't empty
    * Use the following error message setError("First name and last name fields mandatory!")
    */
   const handlePersonSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!firstName?.trim() || !lastName?.trim()) {
+      setError("First name and last name fields mandatory!");
+      return;
+    }
 
     if (!selectedAddress || !addresses.length) {
       setError(
@@ -91,6 +149,11 @@ function App() {
 
     addAddress({ ...foundAddress, firstName, lastName });
   };
+
+  // Hide Address and Name details forms when mandatory fields are empty
+  // This ensures user cannot enter these forms without entering mandatory fields
+  const showAddressDetails = addresses?.length > 0 && postCode && houseNumber;
+  const showNameDetails = selectedAddress && postCode && houseNumber;
 
   return (
     <main>
@@ -125,7 +188,7 @@ function App() {
             <Button type="submit">Find</Button>
           </fieldset>
         </form>
-        {addresses.length > 0 &&
+        {showAddressDetails &&
           addresses.map((address) => {
             return (
               <Radio
@@ -139,7 +202,7 @@ function App() {
             );
           })}
         {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        {selectedAddress && (
+        {showNameDetails && (
           <form onSubmit={handlePersonSubmit}>
             <fieldset>
               <legend>✏️ Add personal info to address</legend>

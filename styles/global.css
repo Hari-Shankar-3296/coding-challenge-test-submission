@@ -24,6 +24,16 @@ code {
   --color-brand: #413ef7;
   --color-text: #141925;
   --color-text-light: #72787d;
+  --color-primary: #1976d2;
+  --color-primary-dark: #115293;
+  --color-on-primary: #fff;
+
+  --color-secondary: #f5f5f5;
+  --color-secondary-dark: #cccccc;
+  --color-on-secondary: #333;
+
+  --border-radius-default: 6px;
+  --width-input: 320px;
   --width-input: 20rem;
   --width-content: 30rem;
 }
